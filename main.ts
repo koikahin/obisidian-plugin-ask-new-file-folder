@@ -74,7 +74,7 @@ export default class AskFolderPlugin extends Plugin {
     }
   }
 
-  private handleCreate(file: TAbstractFile): void {
+  private async handleCreate(file: TAbstractFile): Promise<void> {
     if (this.isMoving) return;
     if (!(file instanceof TFile)) return;
     if (file.extension !== "md") return;
@@ -91,20 +91,33 @@ export default class AskFolderPlugin extends Plugin {
       return aPath.localeCompare(bPath);
     });
 
-    const modal = new FolderSuggestModal(
-      this,
-      allFolders,
-      currentFolderPath,
-      async (folder: TFolder) => {
-        await this.moveFile(file, folder);
-        this.triggerTemplater();
-      },
-      () => {
-        // dismissed — leave file where it is, still trigger Templater
-        this.triggerTemplater();
+    let moved = false;
+    let dismissed = false;
+
+    while (!moved && !dismissed) {
+      const folder = await this.showFolderModal(allFolders, currentFolderPath);
+
+      if (!folder) {
+        dismissed = true;
+      } else {
+        moved = await this.moveFile(file, folder);
       }
-    );
-    modal.open();
+    }
+
+    this.triggerTemplater();
+  }
+
+  private showFolderModal(folders: TFolder[], currentFolderPath: string): Promise<TFolder | null> {
+    return new Promise((resolve) => {
+      const modal = new FolderSuggestModal(
+        this,
+        folders,
+        currentFolderPath,
+        (folder: TFolder) => resolve(folder),
+        () => resolve(null)
+      );
+      modal.open();
+    });
   }
 
   private getAllFolders(): TFolder[] {
@@ -128,20 +141,20 @@ export default class AskFolderPlugin extends Plugin {
     (this.app as any).commands.executeCommandById("templater-obsidian:insert-templater");
   }
 
-  private async moveFile(file: TFile, folder: TFolder): Promise<void> {
+  private async moveFile(file: TFile, folder: TFolder): Promise<boolean> {
     const destPath = folder.path === "/" ? file.name : `${folder.path}/${file.name}`;
-    if (destPath === file.path) return;
+    if (destPath === file.path) return true;
 
-    // Check if a file already exists at the destination
     const existing = this.app.vault.getAbstractFileByPath(destPath);
     if (existing) {
-      // Don't overwrite existing files
-      return;
+      new Notice(`A file named "${file.name}" already exists in ${folder.path === "/" ? "the root folder" : folder.path}.`);
+      return false;
     }
 
     this.isMoving = true;
     try {
       await this.app.vault.rename(file, destPath);
+      return true;
     } finally {
       this.isMoving = false;
     }
