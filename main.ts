@@ -1,4 +1,4 @@
-import { Plugin, FuzzySuggestModal, TFolder, TFile, TAbstractFile } from "obsidian";
+import { Plugin, FuzzySuggestModal, TFolder, TFile, TAbstractFile, Notice } from "obsidian";
 
 class FolderSuggestModal extends FuzzySuggestModal<TFolder> {
   private folders: TFolder[];
@@ -107,6 +107,10 @@ export default class AskFolderPlugin extends Plugin {
         this.collectFolders(child, result);
       }
     }
+  }
+
+  private triggerTemplater(): void {
+    (this.app as any).commands.executeCommandById("templater-obsidian:insert-templater");
   }
 
   private async moveFile(file: TFile, folder: TFolder): Promise<void> {
