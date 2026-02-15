@@ -1,0 +1,9 @@
+{
+  "id": "ask-new-file-folder",
+  "name": "Ask New File Folder",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Prompts you to choose a folder whenever a new file is created.",
+  "author": "sri",
+  "isDesktopOnly": false
+}
