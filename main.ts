@@ -95,11 +95,13 @@ export default class AskFolderPlugin extends Plugin {
       this,
       allFolders,
       currentFolderPath,
-      (folder: TFolder) => {
-        this.moveFile(file, folder);
+      async (folder: TFolder) => {
+        await this.moveFile(file, folder);
+        this.triggerTemplater();
       },
       () => {
-        // dismissed — leave file where it is
+        // dismissed — leave file where it is, still trigger Templater
+        this.triggerTemplater();
       }
     );
     modal.open();
