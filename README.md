@@ -1,3 +1,7 @@
+> [!WARNING]
+> This is a scrappy vibe-coded project to handle a pain-point. Review before use and use it at your own risk. Make sure to have regualar backups of your 
+> vault as this plugin may crash and burn your vault at any time without notice. 
+
 # Ask New File Folder
 
 An [Obsidian](https://obsidian.md) plugin that prompts you to choose a folder every time you create a new markdown file.
