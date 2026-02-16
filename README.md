@@ -1,6 +1,5 @@
-> [!WARNING]
-> This is a scrappy vibe-coded project to handle a pain-point. Review before use and use it at your own risk. Make sure to have regualar backups of your 
-> vault as this plugin may crash and burn your vault at any time without notice. 
+> [!WARNING] 
+> This is a scrappy, vibe-coded, barely-reviewed, barely-tested project that doesn't follow good software engineering practices! I've put the least effort needed to get this to work and address a pain point. Review before use and use it at your own risk. Make sure to have regular backups of your vault as this plugin may crash and burn your vault at any time without notice.
 
 # Ask New File Folder
 
