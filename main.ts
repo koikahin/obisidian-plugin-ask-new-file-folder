@@ -54,24 +54,26 @@ export default class AskFolderPlugin extends Plugin {
   private isMoving = false;
 
   async onload(): Promise<void> {
-    this.registerEvent(
-      this.app.vault.on("create", (file: TAbstractFile) => {
-        this.handleCreate(file);
-      })
-    );
+    this.app.workspace.onLayoutReady(() => {
+      this.registerEvent(
+        this.app.vault.on("create", (file: TAbstractFile) => {
+          this.handleCreate(file);
+        })
+      );
 
-    try {
-      // @ts-ignore — accessing Templater's internal settings; best-effort only
-      const templater = (this.app as any).plugins?.plugins?.["templater-obsidian"];
-      if (templater?.settings?.trigger_on_file_creation) {
-        new Notice(
-          "Ask New File Folder plugin: Templater's auto-trigger is enabled. Disable it to avoid conflicts.",
-          10000
-        );
+      try {
+        // @ts-ignore — accessing Templater's internal settings; best-effort only
+        const templater = (this.app as any).plugins?.plugins?.["templater-obsidian"];
+        if (templater?.settings?.trigger_on_file_creation) {
+          new Notice(
+            "Ask New File Folder plugin: Templater's auto-trigger is enabled. Disable it to avoid conflicts.",
+            10000
+          );
+        }
+      } catch {
+        // Templater not installed or settings structure changed — ignore
       }
-    } catch {
-      // Templater not installed or settings structure changed — ignore
-    }
+    });
   }
 
   private async handleCreate(file: TAbstractFile): Promise<void> {
