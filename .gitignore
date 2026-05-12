@@ -1,3 +1,4 @@
 node_modules/
 main.js
 .claude/
+.DS_Store
